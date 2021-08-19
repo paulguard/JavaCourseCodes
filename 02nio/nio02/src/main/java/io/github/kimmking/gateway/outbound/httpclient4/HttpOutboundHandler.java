@@ -23,9 +23,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
-import java.util.logging.Filter;
 import java.util.stream.Collectors;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
@@ -84,6 +82,9 @@ public class HttpOutboundHandler {
         //httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_CLOSE);
         httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
         httpGet.setHeader("mao", inbound.headers().get("mao"));
+        httpGet.setHeader("javaParam",inbound.headers().get("xjava"));
+
+        System.out.println("xjava:" + inbound.headers().get("xjava"));
 
         httpclient.execute(httpGet, new FutureCallback<HttpResponse>() {
             @Override
