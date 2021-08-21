@@ -15,15 +15,23 @@ public class HttpClientTest {
 
     public static void main(String[] args) throws IOException {
 
+        for (int i = 0; i < 10; i++) {
+            httpGet();
+        }
+
+    }
+
+    private static void httpGet() throws IOException {
+
         CloseableHttpResponse response = null;
         HttpGet get = null;
-
-        CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpClient client = null;
 
         try {
-            StringBuilder url = new StringBuilder("http://localhost:8888");
-            get = new HttpGet(url.toString());
 
+            client = HttpClients.createDefault();
+
+            get = new HttpGet("http://localhost:8888");
             response = client.execute(get);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
@@ -44,7 +52,6 @@ public class HttpClientTest {
 
             client.close();
         }
-
     }
 
 }

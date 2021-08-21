@@ -5,6 +5,8 @@ import java.util.List;
 public interface HttpEndpointRouter {
     
     String route(List<String> endpoints);
+
+    String route(List<String> endpoints,List<Integer> weight);
     
     // Load Balance
     // Random
