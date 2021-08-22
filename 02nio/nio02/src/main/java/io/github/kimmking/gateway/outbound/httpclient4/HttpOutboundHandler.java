@@ -79,9 +79,11 @@ public class HttpOutboundHandler {
 
         String backendUrl = router.route(this.backendUrls,weights);
         final String url = backendUrl + fullRequest.uri();
+
+        System.out.println("被访问的url:"+url);
+
         filter.filter(fullRequest, ctx);
 
-        //TODO ExcutorService now,use netty instead
         proxyService.submit(()->fetchGet(fullRequest, ctx, url));
     }
     
