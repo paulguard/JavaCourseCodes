@@ -10,4 +10,9 @@ public class RandomHttpEndpointRouter implements HttpEndpointRouter {
         Random random = new Random(System.currentTimeMillis());
         return urls.get(random.nextInt(size));
     }
+
+    @Override
+    public String route(List<String> endpoints, List<Integer> weight) {
+        throw new RuntimeException("Unsupported Method");
+    }
 }

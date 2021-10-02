@@ -4,8 +4,8 @@ package io.github.kimmking.gateway.outbound.httpclient4;
 import io.github.kimmking.gateway.filter.HeaderHttpResponseFilter;
 import io.github.kimmking.gateway.filter.HttpRequestFilter;
 import io.github.kimmking.gateway.filter.HttpResponseFilter;
+import io.github.kimmking.gateway.router.WeightHttpEndPointRouter;
 import io.github.kimmking.gateway.router.HttpEndpointRouter;
-import io.github.kimmking.gateway.router.RandomHttpEndpointRouter;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,10 +22,9 @@ import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
-import java.util.logging.Filter;
 import java.util.stream.Collectors;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
@@ -39,7 +38,7 @@ public class HttpOutboundHandler {
     private List<String> backendUrls;
 
     HttpResponseFilter filter = new HeaderHttpResponseFilter();
-    HttpEndpointRouter router = new RandomHttpEndpointRouter();
+    HttpEndpointRouter router = new WeightHttpEndPointRouter();
 
     public HttpOutboundHandler(List<String> backends) {
 
@@ -73,9 +72,18 @@ public class HttpOutboundHandler {
     }
     
     public void handle(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx, HttpRequestFilter filter) {
-        String backendUrl = router.route(this.backendUrls);
+
+        List<Integer> weights = new ArrayList<>();
+        weights.add(70);
+        weights.add(30);
+
+        String backendUrl = router.route(this.backendUrls,weights);
         final String url = backendUrl + fullRequest.uri();
+
+        System.out.println("被访问的url:"+url);
+
         filter.filter(fullRequest, ctx);
+
         proxyService.submit(()->fetchGet(fullRequest, ctx, url));
     }
     
@@ -84,6 +92,9 @@ public class HttpOutboundHandler {
         //httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_CLOSE);
         httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
         httpGet.setHeader("mao", inbound.headers().get("mao"));
+        httpGet.setHeader("javaParam",inbound.headers().get("xjava"));
+
+        System.out.println("xjava:" + inbound.headers().get("xjava"));
 
         httpclient.execute(httpGet, new FutureCallback<HttpResponse>() {
             @Override
