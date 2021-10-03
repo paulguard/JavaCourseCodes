@@ -2,6 +2,6 @@ package io.kimmking.rpcfx.api;
 
 public interface RpcfxResolver {
 
-    Class<?> resolve(String serviceClass);
+    <T> T resolve(String serviceClass,Class<T> type);
 
 }
