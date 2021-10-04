@@ -31,7 +31,7 @@ public class HttpClientTest {
 
             client = HttpClients.createDefault();
 
-            get = new HttpGet("http://localhost:8888");
+            get = new HttpGet("http://localhost:8801");
             response = client.execute(get);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();

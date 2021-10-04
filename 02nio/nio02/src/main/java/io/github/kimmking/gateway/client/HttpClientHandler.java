@@ -23,7 +23,7 @@ public class HttpClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         System.out.println("msg ->" + msg);
 
-        if (msg instanceof FullHttpRequest) {
+        if (msg instanceof FullHttpResponse) {
             FullHttpResponse response = (FullHttpResponse) msg;
             ByteBuf buf = response.content();
             String result = buf.toString(CharsetUtil.UTF_8);

@@ -94,20 +94,19 @@ public final class Rpcfx {
             return JSON.parse(response.getResult().toString());
         }
 
-        private RpcfxResponse post(RpcfxRequest req, String url) throws IOException {
+        private RpcfxResponse post(RpcfxRequest req, String url) {
             String reqJson = JSON.toJSONString(req);
             System.out.println("req json: "+reqJson);
 
             // 1.可以复用client
             // 2.尝试使用httpclient或者netty client
-            OkHttpClient client = new OkHttpClient();
-            final Request request = new Request.Builder()
-                    .url(url)
-                    .post(RequestBody.create(JSONTYPE, reqJson))
-                    .build();
-            String respJson = client.newCall(request).execute().body().string();
-            System.out.println("resp json: "+respJson);
-            return JSON.parseObject(respJson, RpcfxResponse.class);
+            String[] hostAndPort = url.split(":");
+            if (hostAndPort.length == 2) {
+                String result = NettyClient.start(hostAndPort[0], Integer.parseInt(hostAndPort[1]));
+                return JSON.parseObject(result, RpcfxResponse.class);
+            }
+
+            return null;
         }
     }
 }

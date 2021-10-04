@@ -1,19 +1,23 @@
-package io.github.kimmking.gateway.client;
+package io.kimmking.rpcfx.client;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 
-public class NettyClientTest {
+public class NettyClient {
 
-    public static void start(String host,int port){
+    public static String start(String host, int port){
 
         EventLoopGroup group = new NioEventLoopGroup();
-
+        ChannelFuture future = null;
         try {
             Bootstrap b = new Bootstrap();
             b.group(group)
@@ -29,8 +33,7 @@ public class NettyClientTest {
                 }
             });
 
-            ChannelFuture future = b.connect(host, port).sync();
-
+            future = b.connect(host, port).sync();
             ChannelFuture channelFuture = future.channel().closeFuture().sync();
 
         } catch (InterruptedException e) {
@@ -40,10 +43,12 @@ public class NettyClientTest {
             group.shutdownGracefully();
         }
 
+        return "";
     }
 
     public static void main(String[] args) {
-        start("localhost",8801);
+        String result = start("localhost", 8080);
+        System.out.println("the result:"+result);
     }
 
 }
